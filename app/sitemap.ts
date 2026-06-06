@@ -5,6 +5,9 @@ import { getSiteUrl } from "@/lib/site-url";
 const STATIC_ROUTES: { path: string; priority: number; changeFrequency: "daily" | "weekly" | "monthly" }[] = [
   { path: "/", priority: 1.0, changeFrequency: "daily" },
   { path: "/shop", priority: 0.9, changeFrequency: "daily" },
+  { path: "/products", priority: 0.9, changeFrequency: "daily" },
+  { path: "/services", priority: 0.9, changeFrequency: "daily" },
+  { path: "/book", priority: 0.8, changeFrequency: "daily" },
   { path: "/about", priority: 0.5, changeFrequency: "monthly" },
   { path: "/faq", priority: 0.4, changeFrequency: "monthly" },
   { path: "/terms", priority: 0.2, changeFrequency: "monthly" },
@@ -36,12 +39,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Bakery uses a URL-driven product modal (`?product=<slug>` on the home or
   // shop pages). Emit those as deep-linkable URLs so search engines and LLMs
   // can index each product canonically.
-  const productEntries: MetadataRoute.Sitemap = products.map((p: Product) => ({
-    url: `${siteUrl}/shop?product=${encodeURIComponent(p.slug ?? p.id)}`,
-    lastModified: p.updated_at ? new Date(p.updated_at) : now,
-    changeFrequency: "weekly",
-    priority: 0.7,
-  }));
+  const productEntries: MetadataRoute.Sitemap = products
+    .filter((p: Product) => p.type === "product")
+    .map((p: Product) => ({
+      url: `${siteUrl}/products?product=${encodeURIComponent(p.slug ?? p.id)}`,
+      lastModified: p.updated_at ? new Date(p.updated_at) : now,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    }));
 
   const categoryEntries: MetadataRoute.Sitemap = categories.map((c) => ({
     url: `${siteUrl}/categories/${c.slug}`,

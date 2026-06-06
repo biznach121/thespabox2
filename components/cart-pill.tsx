@@ -17,9 +17,24 @@ export function CartPill() {
       type="button"
       onClick={open}
       aria-label={`Open cart, ${count} ${count === 1 ? "item" : "items"}`}
-      className="inline-flex items-center gap-1.5 px-4 py-2.5 sm:py-2 rounded-full bg-foreground text-background text-xs font-semibold tracking-wide transition-transform hover:scale-105 cursor-pointer"
+      className="relative grid h-11 w-10 place-items-center text-[#402720] transition-transform hover:scale-105"
     >
-      Cart · {count}
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+        className="h-6 w-6"
+      >
+        <path d="M6.5 8.5h11l-1 9h-9z" />
+        <path d="M9 8.5a3 3 0 0 1 6 0" />
+      </svg>
+      <span className="absolute right-0 top-0 grid h-4 min-w-4 place-items-center rounded-full border border-[#402720]/55 bg-[#f3f0e8] px-1 text-[10px] font-bold leading-none text-[#402720]">
+        {count}
+      </span>
     </button>
   );
 }
@@ -28,9 +43,7 @@ export function CartPillSkeleton() {
   return (
     <span
       aria-hidden
-      className="inline-flex items-center gap-1.5 px-4 py-2.5 sm:py-2 rounded-full bg-foreground/80 text-background text-xs font-semibold tracking-wide"
-    >
-      Cart · …
-    </span>
+      className="inline-flex h-11 w-10 items-center justify-center text-[#402720]"
+    />
   );
 }

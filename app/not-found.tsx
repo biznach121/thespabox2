@@ -19,8 +19,14 @@ export default function NotFound() {
           </p>
         </div>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <Link href="/shop" className="spabox-link-button">
+          <Link href="/services" className="spabox-link-button">
             Browse services
+          </Link>
+          <Link
+            href="/products"
+            className="inline-flex min-h-14 items-center justify-center border border-[#402720]/18 px-7 text-sm font-semibold text-[#402720] transition-colors hover:bg-[#d8d3c5]"
+          >
+            Browse products
           </Link>
           <Link
             href="/"

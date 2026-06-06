@@ -5,7 +5,8 @@ import { brand } from "@/lib/brand";
 export async function Footer() {
   const instagram = brand.socials.find((social) => social.icon === "instagram");
   const serviceLinks = [
-    { label: "Treatments", href: "/shop" },
+    { label: "Products", href: "/products" },
+    { label: "Services", href: "/services" },
     { label: "Book", href: "/book" },
     { label: "Location", href: "/location" },
     { label: "Instagram", href: instagram?.href ?? "https://www.instagram.com/_the_spabox/" },

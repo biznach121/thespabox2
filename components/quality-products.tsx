@@ -2,9 +2,11 @@
 
 import Image from "next/image";
 import { useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { formatMoney, type Product as CatalogueProduct } from "@cimplify/sdk";
 import { useCart, useCartDrawer } from "@cimplify/sdk/react";
 import { brand } from "@/lib/brand";
+import { withDefaultVariant } from "@/lib/cart-options";
 
 export function QualityProducts({
   catalogueProducts = [],
@@ -88,6 +90,9 @@ function ProductCard({
   position: number;
 }) {
   const isOlive = position % 2 === 1;
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { addItem } = useCart();
   const { open } = useCartDrawer();
   const [isAdding, setIsAdding] = useState(false);
@@ -103,7 +108,7 @@ function ProductCard({
     setIsAdding(true);
     setError(false);
     try {
-      await addItem(product, 1);
+      await addItem(product, 1, withDefaultVariant(product));
       setAdded(true);
       open();
       window.setTimeout(() => setAdded(false), 2200);
@@ -114,10 +119,25 @@ function ProductCard({
     }
   };
 
+  const openDetails = () => {
+    const next = new URLSearchParams(searchParams?.toString() ?? "");
+    next.set("product", product.slug || product.id);
+    router.push(`${pathname}?${next.toString()}`, { scroll: false });
+  };
+
   return (
     <article
+      role="button"
+      tabIndex={0}
+      onClick={openDetails}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          openDetails();
+        }
+      }}
       className={[
-        "relative min-h-[560px] overflow-hidden rounded-[180px] border border-white/25 px-7 pb-8 pt-[82px] shadow-[0_24px_70px_rgba(64,39,32,0.08)] sm:h-[660px] sm:rounded-[240px] sm:px-12 sm:pt-[104px] lg:h-[720px] lg:px-14 lg:pt-[112px]",
+        "relative min-h-[560px] cursor-pointer overflow-hidden rounded-[180px] border border-white/25 px-7 pb-8 pt-[82px] shadow-[0_24px_70px_rgba(64,39,32,0.08)] transition-transform hover:-translate-y-1 sm:h-[660px] sm:rounded-[240px] sm:px-12 sm:pt-[104px] lg:h-[720px] lg:px-14 lg:pt-[112px]",
         position === 0 ? "lg:translate-y-[-16px]" : "hidden lg:block lg:translate-y-[24px]",
         isOlive ? "bg-[#82785f] text-white" : "bg-[#d8d3c5] text-[#402720]",
       ].join(" ")}
@@ -139,7 +159,10 @@ function ProductCard({
         </div>
         <button
           type="button"
-          onClick={handleBuy}
+          onClick={(event) => {
+            event.stopPropagation();
+            void handleBuy();
+          }}
           disabled={isAdding}
           aria-label={`Add ${product.name} to cart`}
           className={[

@@ -23,14 +23,16 @@ export function AccountPill() {
     });
   }, [session, refresh]);
 
-  if (loading || !CLIENT_ID) return <span className="h-9 w-24" aria-hidden />;
+  if (loading || !CLIENT_ID) return <span className="hidden h-9 w-24 sm:block" aria-hidden />;
 
   return (
-    <CimplifyUserButton
-      session={session}
-      clientId={CLIENT_ID}
-      redirectUri={`${typeof window !== "undefined" ? window.location.origin : ""}/auth/callback`}
-      onSignIn={refresh}
-    />
+    <span className="hidden sm:inline-flex">
+      <CimplifyUserButton
+        session={session}
+        clientId={CLIENT_ID}
+        redirectUri={`${typeof window !== "undefined" ? window.location.origin : ""}/auth/callback`}
+        onSignIn={refresh}
+      />
+    </span>
   );
 }

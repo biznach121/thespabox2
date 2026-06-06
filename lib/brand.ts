@@ -161,7 +161,8 @@ export const brand: Brand = {
   header: {
     nav: [
       { label: "About", href: "/about" },
-      { label: "Services", href: "/shop" },
+      { label: "Products", href: "/products" },
+      { label: "Services", href: "/services" },
       { label: "Location", href: "/location" },
     ],
   },
@@ -174,7 +175,7 @@ export const brand: Brand = {
     primaryCtaLabel: "Make an appointment",
     primaryCtaHref: "/book",
     secondaryCtaLabel: "View services",
-    secondaryCtaHref: "/shop",
+    secondaryCtaHref: "/services",
     videoUrl:
       "https://res.cloudinary.com/dcc5ggnkc/video/upload/v1780581502/tbwbfo6qn3mrassugjrg.mp4",
     videoUrls: [
@@ -307,7 +308,7 @@ export const brand: Brand = {
         note: "Single gloss",
         secondaryNote: "Two-shade gloss set",
         ctaLabel: "Buy",
-        href: "/shop",
+        href: "/products",
         catalogueMatches: ["lip gloss", "lipgloss", "gloss"],
         image: "https://res.cloudinary.com/dcc5ggnkc/image/upload/v1780684208/yce8my8rr0sa8qhtdo8w.jpg",
         imageAlt: "The SpaBox lip gloss product",
@@ -323,7 +324,7 @@ export const brand: Brand = {
         note: "Mint oil bottle",
         secondaryNote: "Oil + gloss set",
         ctaLabel: "Buy",
-        href: "/shop",
+        href: "/products",
         catalogueMatches: ["mint oil", "beauty oil", "mint"],
         image: "https://res.cloudinary.com/dcc5ggnkc/image/upload/v1780684207/a4dggpe8escdshffq9z4.jpg",
         imageAlt: "The SpaBox mint oil product",
@@ -339,7 +340,7 @@ export const brand: Brand = {
         note: "Core brush set",
         secondaryNote: "Full brush set",
         ctaLabel: "Buy",
-        href: "/shop",
+        href: "/products",
         catalogueMatches: ["brush", "brushes", "brush essentials"],
         image: "https://res.cloudinary.com/dcc5ggnkc/image/upload/v1780684208/h9irccy3f3qmnevjttlx.jpg",
         imageAlt: "The SpaBox makeup brush set",
@@ -355,7 +356,7 @@ export const brand: Brand = {
         note: "Single foundation",
         secondaryNote: "Base + brush set",
         ctaLabel: "Buy",
-        href: "/shop",
+        href: "/products",
         catalogueMatches: ["foundation", "smooth foundation", "base"],
         image: "https://res.cloudinary.com/dcc5ggnkc/image/upload/v1780684208/thekm5rhhjz0wiyxmdr8.jpg",
         imageAlt: "The SpaBox foundation product",
@@ -605,7 +606,8 @@ export const brand: Brand = {
       {
         title: "Visit",
         links: [
-          { label: "Treatments", href: "/shop" },
+          { label: "Products", href: "/products" },
+          { label: "Services", href: "/services" },
           { label: "Book a service", href: "/book" },
           { label: "Location", href: "/location" },
           { label: "Instagram", href: "https://www.instagram.com/_the_spabox/" },

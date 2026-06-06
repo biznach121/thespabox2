@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { ProductSheet, useProduct, useCart } from "@cimplify/sdk/react";
+import { withDefaultVariant } from "@/lib/cart-options";
 
 /**
  * URL-driven product modal. Reads `?product=<slug>` and renders the SDK's
@@ -53,16 +54,16 @@ export function ProductModal() {
       role="dialog"
       aria-modal="true"
       onClick={close}
-      className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center sm:p-6 bg-foreground/50 backdrop-blur-sm"
+      className="fixed inset-0 z-[320] flex items-end justify-center bg-[#402720]/52 backdrop-blur-sm sm:items-center sm:p-6"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full sm:max-w-lg max-h-[92vh] overflow-auto bg-card sm:rounded-3xl rounded-t-3xl shadow-2xl"
+        className="no-scrollbar spabox-product-modal relative max-h-[92svh] w-full overflow-y-auto rounded-t-[30px] bg-[#f3f0e8] text-[#402720] shadow-[0_28px_90px_rgba(64,39,32,0.28)] sm:max-w-[560px] sm:rounded-[30px]"
       >
         <button
           onClick={close}
           aria-label="Close product details"
-          className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-card border border-border text-sm cursor-pointer transition-colors hover:bg-muted"
+          className="absolute right-4 top-4 z-10 grid h-10 w-10 cursor-pointer place-items-center rounded-full border border-[#402720]/12 bg-[#f3f0e8]/92 text-[#402720] shadow-[0_10px_28px_rgba(64,39,32,0.12)] transition-colors hover:bg-[#d8d3c5]"
         >
           ✕
         </button>
@@ -71,7 +72,7 @@ export function ProductModal() {
             product={product}
             onClose={close}
             onAddToCart={async (p, qty, options) => {
-              await addItem(p, qty, options);
+              await addItem(p, qty, withDefaultVariant(p, options));
               close();
             }}
             renderImage={({ src, alt, className }) => (
@@ -87,12 +88,12 @@ export function ProductModal() {
               />
             )}
             classNames={{
-              root: "p-6 sm:p-8 gap-4",
-              image: "rounded-2xl overflow-hidden -mx-6 sm:-mx-8 -mt-6 sm:-mt-8 mb-2",
-              header: "flex items-baseline justify-between gap-4",
-              name: "font-serif text-2xl font-semibold m-0",
-              price: "text-lg font-semibold text-primary",
-              description: "text-sm text-muted-foreground leading-relaxed",
+              root: "p-5 sm:p-7 gap-5",
+              image: "overflow-hidden -mx-5 sm:-mx-7 -mt-5 sm:-mt-7 mb-1 max-h-[330px] bg-[#d8d3c5]",
+              header: "flex items-start justify-between gap-4",
+              name: "font-serif text-[34px] leading-[0.9] font-light m-0 text-[#402720]",
+              price: "shrink-0 text-lg font-bold text-[#82785f]",
+              description: "text-[15px] font-medium text-[#4d362f]/72 leading-relaxed",
               customizer: "pt-2",
             }}
           />

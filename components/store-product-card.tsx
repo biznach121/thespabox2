@@ -21,9 +21,9 @@ export function StoreProductCard({ product }: Props) {
       : null;
 
   return (
-    <article className="group relative h-full overflow-hidden rounded-[30px] border border-[#402720]/10 bg-[#f3f0e8] shadow-[0_22px_70px_rgba(64,39,32,0.08)] transition duration-500 hover:-translate-y-1 hover:shadow-[0_30px_90px_rgba(64,39,32,0.14)]">
+    <article className="group relative h-full overflow-hidden rounded-[24px] border border-[#402720]/10 bg-[#f3f0e8] shadow-[0_18px_54px_rgba(64,39,32,0.08)] transition duration-500 hover:-translate-y-1 hover:shadow-[0_30px_90px_rgba(64,39,32,0.14)] sm:rounded-[30px]">
       <Link href={href} scroll={false} prefetch={false} className="block h-full">
-        <div className="relative aspect-[1.05] overflow-hidden bg-[#d8d3c5]">
+        <div className="relative aspect-[1.22] overflow-hidden bg-[#d8d3c5] sm:aspect-[1.05]">
           {image ? (
             <Image
               src={image}
@@ -49,13 +49,13 @@ export function StoreProductCard({ product }: Props) {
           </div>
         </div>
 
-        <div className="grid min-h-[230px] content-between gap-6 p-5 sm:p-6">
+        <div className="grid min-h-[190px] content-between gap-5 p-5 sm:min-h-[230px] sm:gap-6 sm:p-6">
           <div>
             <div className="flex items-start justify-between gap-4">
-              <h2 className="m-0 max-w-[260px] font-serif text-[34px] font-light leading-[0.9] tracking-normal text-[#402720]">
+              <h2 className="m-0 max-w-[260px] font-serif text-[38px] font-light leading-[0.88] tracking-normal text-[#402720] sm:text-[34px]">
                 {product.name}
               </h2>
-              <p className="m-0 shrink-0 pt-1 font-serif text-[24px] font-light leading-none text-[#82785f]">
+              <p className="m-0 shrink-0 pt-1 font-serif text-[22px] font-light leading-none text-[#82785f] sm:text-[24px]">
                 {formatMoney(product.default_price)}
               </p>
             </div>

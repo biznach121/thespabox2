@@ -176,6 +176,41 @@
     background: #2f1d18;
   }
 
+  .spabox-product-modal [data-cimplify-customizer-actions] {
+    border-color: rgba(64, 39, 32, 0.12);
+  }
+
+  .spabox-product-modal [data-cimplify-customizer-actions] > div {
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .spabox-product-modal [data-cimplify-customizer-submit] {
+    min-height: 56px;
+    border-radius: 999px;
+    background: #402720 !important;
+    color: #f3f0e8 !important;
+    font-weight: 800;
+    box-shadow: 0 16px 38px rgba(64, 39, 32, 0.2);
+  }
+
+  .spabox-product-modal [data-cimplify-customizer-submit]:hover:not(:disabled) {
+    background: #2f1d18 !important;
+  }
+
+  .spabox-product-modal [data-cimplify-quantity] {
+    min-height: 56px;
+    border-radius: 999px;
+    border: 1px solid rgba(64, 39, 32, 0.16);
+    background: rgba(255, 250, 240, 0.82);
+  }
+
+  .spabox-product-modal [data-cimplify-customizer-textarea] {
+    border-color: rgba(64, 39, 32, 0.14);
+    border-radius: 18px;
+    background: rgba(255, 250, 240, 0.78);
+  }
+
   @media (min-width: 640px) {
     .spabox-shell {
       padding-left: 32px;
@@ -188,6 +223,22 @@
   }
 
   @media (max-width: 639px) {
+    [data-site-header] {
+      padding: 10px 16px;
+    }
+
+    [data-site-header] > a {
+      min-width: 0;
+    }
+
+    [data-site-header] > a span {
+      width: 138px !important;
+    }
+
+    [data-site-header] > div {
+      gap: 10px;
+    }
+
     .spabox-shell {
       padding: 36px 16px 64px;
     }
@@ -210,6 +261,7 @@
     .spabox-card {
       border-radius: 22px;
     }
+
   }
 
   .service-highlight {

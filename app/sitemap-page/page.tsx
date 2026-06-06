@@ -12,6 +12,7 @@ export const revalidate = 3600;
 
 interface SitemapData {
   products: { slug: string; name: string }[];
+  services: { slug: string; name: string }[];
   categories: { slug: string; name: string }[];
   collections: { slug: string; name: string }[];
 }
@@ -30,11 +31,20 @@ async function getSitemap(): Promise<SitemapData> {
       cacheOptions: { revalidate: 3600, tags: [tags.collections()] },
     }),
   ]);
+  const catalogueItems = pRes.ok ? pRes.value.items : [];
   return {
-    products: (pRes.ok ? pRes.value.items : []).map((p: Product) => ({
-      slug: p.slug ?? p.id,
-      name: p.name,
-    })),
+    products: catalogueItems
+      .filter((p: Product) => p.type === "product")
+      .map((p: Product) => ({
+        slug: p.slug ?? p.id,
+        name: p.name,
+      })),
+    services: catalogueItems
+      .filter((p: Product) => p.type === "service")
+      .map((p: Product) => ({
+        slug: p.slug ?? p.id,
+        name: p.name,
+      })),
     categories: (cRes.ok ? cRes.value : []).map((c) => ({ slug: c.slug, name: c.name })),
     collections: (colRes.ok ? colRes.value : []).map((c) => ({ slug: c.slug, name: c.name })),
   };
@@ -46,6 +56,8 @@ const STATIC_LINKS: { title: string; links: { href: string; label: string }[] }[
     links: [
       { href: "/", label: "Home" },
       { href: "/shop", label: "Services & products" },
+      { href: "/products", label: "Products" },
+      { href: "/services", label: "Services" },
       { href: "/book", label: "Book a service" },
       { href: "/location", label: "Location" },
       { href: "/search", label: "Search" },
@@ -92,7 +104,7 @@ const STATIC_LINKS: { title: string; links: { href: string; label: string }[] }[
 ];
 
 export default async function SitemapHtmlPage() {
-  const { products, categories, collections } = await getSitemap();
+  const { products, services, categories, collections } = await getSitemap();
 
   return (
     <article className="spabox-page">
@@ -151,9 +163,20 @@ export default async function SitemapHtmlPage() {
               {products.map((p) => (
                 <li key={p.slug}>
                   <Link
-                    href={`/shop?product=${encodeURIComponent(p.slug)}`}
+                    href={`/products?product=${encodeURIComponent(p.slug)}`}
                     className="transition-colors hover:text-[#402720]"
                   >
+                    {p.name}
+                  </Link>
+                </li>
+              ))}
+            </Section>
+          )}
+          {services.length > 0 && (
+            <Section title={`Services (${services.length})`}>
+              {services.map((p) => (
+                <li key={p.slug}>
+                  <Link href="/services" className="transition-colors hover:text-[#402720]">
                     {p.name}
                   </Link>
                 </li>

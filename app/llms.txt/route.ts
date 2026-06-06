@@ -31,6 +31,8 @@ async function buildLlmsTxt(SITE_URL: string): Promise<string> {
   lines.push("## Browse");
   lines.push(`- [Home](${SITE_URL}/)`);
   lines.push(`- [Shop](${SITE_URL}/shop): Full menu with filter and sort.`);
+  lines.push(`- [Products](${SITE_URL}/products): Product-only live catalogue.`);
+  lines.push(`- [Services](${SITE_URL}/services): Service-only booking page.`);
 
   if (categories.length > 0) {
     lines.push("");
@@ -52,14 +54,27 @@ async function buildLlmsTxt(SITE_URL: string): Promise<string> {
     }
   }
 
-  if (products.length > 0) {
+  const physicalProducts = products.filter((p) => p.type === "product");
+  const services = products.filter((p) => p.type === "service");
+
+  if (physicalProducts.length > 0) {
     lines.push("");
     lines.push("## Products");
-    for (const p of products) {
+    for (const p of physicalProducts) {
       const slug = p.slug ?? p.id;
       const price = `${brand.currency} ${p.default_price}`;
       const desc = p.description ? ` — ${p.description.replace(/\s+/g, " ").slice(0, 200)}` : "";
-      lines.push(`- [${p.name}](${SITE_URL}/shop?product=${slug}) (${price})${desc}`);
+      lines.push(`- [${p.name}](${SITE_URL}/products?product=${slug}) (${price})${desc}`);
+    }
+  }
+
+  if (services.length > 0) {
+    lines.push("");
+    lines.push("## Services");
+    for (const p of services) {
+      const price = `${brand.currency} ${p.default_price}`;
+      const duration = p.duration_minutes ? `, ${p.duration_minutes} min` : "";
+      lines.push(`- [${p.name}](${SITE_URL}/services) (${price}${duration})`);
     }
   }
 

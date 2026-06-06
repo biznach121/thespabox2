@@ -54,19 +54,19 @@ export function MobileNav() {
       </button>
 
       {open ? (
-        <div className="fixed inset-0 z-50 sm:hidden">
+        <div className="fixed inset-0 z-[300] sm:hidden">
           <button
             type="button"
             onClick={() => setOpen(false)}
             aria-label="Close menu"
-            className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+            className="absolute inset-0 bg-[#402720]/28 backdrop-blur-sm"
           />
           <nav
             id="mobile-nav-drawer"
             aria-label="Mobile navigation"
-            className="absolute inset-y-0 right-0 w-[85%] max-w-sm flex flex-col bg-background border-l border-border shadow-2xl"
+            className="absolute inset-y-0 right-0 flex w-[86%] max-w-[340px] flex-col border-l border-[#402720]/12 bg-[#f3f0e8] text-[#402720] shadow-2xl"
           >
-            <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+            <div className="flex items-center justify-between border-b border-[#402720]/12 px-6 py-5">
               <span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
                 Menu
               </span>
@@ -74,7 +74,7 @@ export function MobileNav() {
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label="Close menu"
-                className="grid place-items-center w-11 h-11 -mr-2 rounded-md text-foreground hover:bg-muted transition-colors"
+                className="grid h-11 w-11 -mr-2 place-items-center rounded-md text-[#402720] transition-colors hover:bg-[#d8d3c5]"
               >
                 <svg
                   width="20"
@@ -92,13 +92,13 @@ export function MobileNav() {
                 </svg>
               </button>
             </div>
-            <ul className="flex flex-col gap-1 px-3 py-4">
+            <ul className="flex flex-col gap-1 bg-[#f3f0e8] px-4 py-5">
               {brand.header.nav.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
                     onClick={() => setOpen(false)}
-                    className="block px-3 py-3 rounded-md text-base font-medium text-foreground hover:bg-muted transition-colors"
+                    className="block rounded-xl px-4 py-4 text-base font-semibold text-[#402720] transition-colors hover:bg-[#d8d3c5]"
                   >
                     {link.label}
                   </Link>

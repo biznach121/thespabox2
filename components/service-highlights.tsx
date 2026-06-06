@@ -7,13 +7,13 @@ import { useRef } from "react";
 const highlights = [
   {
     label: "Lashes",
-    href: "/shop",
+    href: "/services",
     image: "https://res.cloudinary.com/dcc5ggnkc/image/upload/v1780683826/hypyfgenkouympcgvexi.jpg",
     alt: "Close-up lash beauty treatment",
   },
   {
     label: "Pedicure",
-    href: "/shop",
+    href: "/services",
     image: "https://res.cloudinary.com/dcc5ggnkc/image/upload/v1780683449/hzac8bb7wgpx2n0lahad.jpg",
     alt: "Pedicure spa care",
   },
@@ -25,25 +25,25 @@ const highlights = [
   },
   {
     label: "Manicure",
-    href: "/shop",
+    href: "/services",
     image: "https://res.cloudinary.com/dcc5ggnkc/image/upload/v1780683450/d6qkoq7uzw1xdclrlpkb.jpg",
     alt: "Detailed manicure and nail care",
   },
   {
     label: "Brows",
-    href: "/shop",
+    href: "/services",
     image: "https://res.cloudinary.com/dcc5ggnkc/image/upload/v1780683450/qrnxmq7a4k6hqutqivfi.jpg",
     alt: "Brow grooming treatment",
   },
   {
     label: "Waxing",
-    href: "/shop",
+    href: "/services",
     image: "https://res.cloudinary.com/dcc5ggnkc/image/upload/v1780683646/tkcieiku8dp4qbmriwvy.jpg",
     alt: "Waxing beauty treatment",
   },
   {
     label: "Piercing",
-    href: "/shop",
+    href: "/services",
     image: "https://res.cloudinary.com/dcc5ggnkc/image/upload/v1780683449/jmjdbjirlzmylxymnbbm.jpg",
     alt: "Piercing styling detail",
   },
