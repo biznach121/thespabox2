@@ -1,17 +1,22 @@
 import type { NextConfig } from "next";
 
-// Same-origin proxy target for the storefront API. The public key
-// decides: a real `cpk_live_…` / `cpk_test_…` only resolves against
-// hosted Cimplify, so browser cart writes go to the same place the
-// server catalogue reads come from. Anything else (`mock-dev`, empty)
+// Same-origin proxy target for the storefront API. An explicit API URL wins;
+// otherwise a hosted Cimplify key routes browser cart writes to the same place
+// the server catalogue reads come from. Anything else (`mock-dev`, empty)
 // falls back to the local `cimplify dev` mock in dev.
 const publicKey = process.env.NEXT_PUBLIC_CIMPLIFY_PUBLIC_KEY?.trim() ?? "";
+const configuredStorefrontUrl = (
+  process.env.CIMPLIFY_API_URL?.trim() ||
+  process.env.NEXT_PUBLIC_CIMPLIFY_API_URL?.trim() ||
+  ""
+).replace(/\/+$/, "");
 const keyTargetsHostedCimplify =
   publicKey.startsWith("cpk_live_") || publicKey.startsWith("cpk_test_");
 const STOREFRONT_URL =
-  process.env.NODE_ENV === "production" || keyTargetsHostedCimplify
+  configuredStorefrontUrl ||
+  (process.env.NODE_ENV === "production" || keyTargetsHostedCimplify
     ? "https://storefronts.cimplify.io"
-    : "http://127.0.0.1:8787";
+    : "http://127.0.0.1:8787");
 
 if (STOREFRONT_URL === "http://127.0.0.1:8787") {
   console.warn(

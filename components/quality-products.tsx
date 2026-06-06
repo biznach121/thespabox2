@@ -11,13 +11,19 @@ export function QualityProducts({
 }: {
   catalogueProducts?: CatalogueProduct[];
 }) {
-  const products = brand.qualityProducts.items;
+  const products = useMemo(
+    () => catalogueProducts.filter((product) => product.type === "product"),
+    [catalogueProducts],
+  );
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState<"next" | "previous">("next");
-  const visible = useMemo(
-    () => [products[index], products[(index + 1) % products.length]],
-    [index, products],
-  );
+  const visible = useMemo(() => {
+    if (products.length === 0) return [];
+    if (products.length === 1) return [products[0]];
+    return [products[index], products[(index + 1) % products.length]];
+  }, [index, products]);
+
+  if (products.length === 0) return null;
 
   const goPrevious = () => {
     setDirection("previous");
@@ -45,53 +51,59 @@ export function QualityProducts({
         >
           {visible.map((product, position) => (
             <ProductCard
-              key={`${product.name}-${index}`}
+              key={`${product.id}-${index}`}
               product={product}
-              catalogueProduct={findCatalogueProduct(product, catalogueProducts)}
               position={position}
             />
           ))}
         </div>
 
         <div className="mt-10 flex items-center justify-center gap-4">
-          <CarouselButton label="Previous product" onClick={goPrevious} direction="previous" />
+          <CarouselButton
+            label="Previous product"
+            onClick={goPrevious}
+            direction="previous"
+            disabled={products.length < 2}
+          />
           <span className="text-[13px] font-semibold text-[#402720]/70">
             {index + 1} / {products.length}
           </span>
-          <CarouselButton label="Next product" onClick={goNext} direction="next" />
+          <CarouselButton
+            label="Next product"
+            onClick={goNext}
+            direction="next"
+            disabled={products.length < 2}
+          />
         </div>
       </div>
     </section>
   );
 }
 
-type Product = (typeof brand.qualityProducts.items)[number];
-
 function ProductCard({
   product,
-  catalogueProduct,
   position,
 }: {
-  product: Product;
-  catalogueProduct?: CatalogueProduct;
+  product: CatalogueProduct;
   position: number;
 }) {
-  const isOlive = product.tone === "olive";
+  const isOlive = position % 2 === 1;
   const { addItem } = useCart();
   const { open } = useCartDrawer();
   const [isAdding, setIsAdding] = useState(false);
   const [added, setAdded] = useState(false);
   const [error, setError] = useState(false);
-  const displayPrice = catalogueProduct
-    ? formatMoney(catalogueProduct.default_price)
-    : product.price;
+  const displayPrice = formatMoney(product.default_price);
+  const description = stripHtml(product.description ?? "");
+  const image = product.image_url || product.images?.[0];
+  const subtitle = description || "Live catalogue product";
 
   const handleBuy = async () => {
-    if (!catalogueProduct || isAdding) return;
+    if (isAdding) return;
     setIsAdding(true);
     setError(false);
     try {
-      await addItem(catalogueProduct, 1);
+      await addItem(product, 1);
       setAdded(true);
       open();
       window.setTimeout(() => setAdded(false), 2200);
@@ -122,37 +134,26 @@ function ProductCard({
             {product.name}
           </h3>
           <p className="mt-2 text-[14px] font-semibold leading-tight opacity-[0.82] sm:text-[15px]">
-            {product.subtitle}
+            {subtitle}
           </p>
         </div>
         <button
           type="button"
           onClick={handleBuy}
-          disabled={!catalogueProduct || isAdding}
-          aria-label={
-            catalogueProduct
-              ? `Add ${catalogueProduct.name} to cart`
-              : `${product.name.replace(/\s+/g, " ")} is not available in the live catalogue yet`
-          }
+          disabled={isAdding}
+          aria-label={`Add ${product.name} to cart`}
           className={[
             "mt-1 inline-flex h-11 w-14 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold uppercase transition-transform hover:scale-105 sm:mt-3",
-            !catalogueProduct || isAdding ? "cursor-not-allowed opacity-60" : "",
+            isAdding ? "cursor-not-allowed opacity-60" : "",
             isOlive ? "bg-[#f0eee8] text-[#6f674f]" : "bg-[#402720] text-white",
           ].join(" ")}
         >
-          {isAdding ? "..." : added ? "In" : product.ctaLabel}
+          {isAdding ? "..." : added ? "In" : "Buy"}
         </button>
       </div>
 
       <div className="relative z-10 mt-6 max-w-[265px] space-y-3 sm:mt-7">
-        <PriceLine price={displayPrice} compareAt={product.compareAt} note={product.note} />
-        {product.secondaryPrice ? (
-          <PriceLine
-            price={product.secondaryPrice}
-            compareAt={product.secondaryCompareAt}
-            note={product.secondaryNote ?? product.note}
-          />
-        ) : null}
+        <PriceLine price={displayPrice} note="Live catalogue product" />
         {error ? (
           <p className="m-0 text-[12px] font-semibold text-red-950/80">
             Could not add. Try again.
@@ -166,47 +167,25 @@ function ProductCard({
           isOlive ? "bg-[#6f674f]" : "bg-[#c5bea9]",
         ].join(" ")}
       >
-        <Image
-          src={product.image}
-          alt={product.imageAlt}
-          fill
-          sizes="(min-width: 1024px) 44vw, 90vw"
-          className="object-cover"
-          unoptimized
-        />
+        {image ? (
+          <Image
+            src={image}
+            alt={product.name}
+            fill
+            sizes="(min-width: 1024px) 44vw, 90vw"
+            className="object-cover"
+            unoptimized
+          />
+        ) : (
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_35%_25%,#f3f0e8,#d8d3c5_52%,#bfb8a5)]" />
+        )}
       </div>
     </article>
   );
 }
 
-function normalize(value: string): string {
-  return value
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function findCatalogueProduct(
-  featuredProduct: Product,
-  catalogueProducts: CatalogueProduct[],
-): CatalogueProduct | undefined {
-  const matchTerms = featuredProduct.catalogueMatches.map(normalize);
-  return catalogueProducts.find((product) => {
-    const haystack = normalize(
-      [
-        product.name,
-        product.slug,
-        product.description,
-        product.sku,
-        product.tags?.join(" "),
-        product.metadata ? JSON.stringify(product.metadata) : "",
-      ]
-        .filter(Boolean)
-        .join(" "),
-    );
-    return matchTerms.some((term) => haystack.includes(term));
-  });
+function stripHtml(value: string): string {
+  return value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 }
 
 function PriceLine({
@@ -237,17 +216,20 @@ function CarouselButton({
   label,
   onClick,
   direction,
+  disabled = false,
 }: {
   label: string;
   onClick: () => void;
   direction: "previous" | "next";
+  disabled?: boolean;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       aria-label={label}
-      className="grid h-12 w-12 place-items-center rounded-full border border-[#402720]/35 text-[#402720] transition-colors hover:bg-[#402720] hover:text-[#e8e5dd]"
+      className="grid h-12 w-12 place-items-center rounded-full border border-[#402720]/35 text-[#402720] transition-colors hover:bg-[#402720] hover:text-[#e8e5dd] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-[#402720]"
     >
       <svg
         viewBox="0 0 24 24"

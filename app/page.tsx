@@ -19,10 +19,10 @@ export const revalidate = 3600;
 async function getFeaturedProducts(): Promise<Product[]> {
   const result = await getServerClient().catalogue.getProducts(
     { limit: 100 },
-    { cacheOptions: { revalidate: 3600, tags: [tags.products()] } },
+    { cacheOptions: { revalidate: 0, tags: [tags.products()] } },
   );
   if (!result.ok) return [];
-  return result.value.items.filter((product) => product.type !== "service");
+  return result.value.items.filter((product) => product.type === "product");
 }
 
 export default async function HomePage() {

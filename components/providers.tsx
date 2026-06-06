@@ -20,7 +20,8 @@ export function Providers({
 }) {
   const client = useMemo(() => {
     const baseUrl =
-      typeof window !== "undefined" ? window.location.origin : "http://127.0.0.1:8787";
+      process.env.NEXT_PUBLIC_CIMPLIFY_API_URL?.trim() ||
+      (typeof window !== "undefined" ? window.location.origin : "http://127.0.0.1:8787");
     const publicKey = process.env.NEXT_PUBLIC_CIMPLIFY_PUBLIC_KEY ?? "mock-dev";
     return createCimplifyClient({
       baseUrl,
