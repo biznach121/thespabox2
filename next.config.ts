@@ -5,11 +5,18 @@ import type { NextConfig } from "next";
 // the server catalogue reads come from. Anything else (`mock-dev`, empty)
 // falls back to the local `cimplify dev` mock in dev.
 const publicKey = process.env.NEXT_PUBLIC_CIMPLIFY_PUBLIC_KEY?.trim() ?? "";
-const configuredStorefrontUrl = (
+const rawConfiguredUrl = (
   process.env.CIMPLIFY_API_URL?.trim() ||
   process.env.NEXT_PUBLIC_CIMPLIFY_API_URL?.trim() ||
   ""
 ).replace(/\/+$/, "");
+// A scheme-less value (e.g. "storefronts.cimplify.io") is a valid host but an
+// invalid rewrite `destination` — Next requires `/`, `http://`, or `https://`.
+// Default a bare host to https:// so a misconfigured env var can't fail the build.
+const configuredStorefrontUrl =
+  rawConfiguredUrl && !/^https?:\/\//.test(rawConfiguredUrl) && !rawConfiguredUrl.startsWith("/")
+    ? `https://${rawConfiguredUrl}`
+    : rawConfiguredUrl;
 const keyTargetsHostedCimplify =
   publicKey.startsWith("cpk_live_") || publicKey.startsWith("cpk_test_");
 const STOREFRONT_URL =
