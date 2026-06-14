@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getServerClient, type Product } from "@cimplify/sdk/server";
+import { getServerClient, type Product } from "@/lib/sdk-server";
 import { getSiteUrl } from "@/lib/site-url";
 
 const STATIC_ROUTES: { path: string; priority: number; changeFrequency: "daily" | "weekly" | "monthly" }[] = [

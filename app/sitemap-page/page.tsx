@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getServerClient, tags, type Product } from "@cimplify/sdk/server";
+import { getServerClient, tags, type Product } from "@/lib/sdk-server";
 import { brand } from "@/lib/brand";
 
 export const metadata: Metadata = {

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { getServerClient, tags, type Product } from "@cimplify/sdk/server";
+import { getServerClient, tags, type Category, type Product } from "@/lib/sdk-server";
 import { BookClient } from "./book-client";
 import { brand } from "@/lib/brand";
 
@@ -11,19 +11,30 @@ export const metadata: Metadata = {
 
 export const revalidate = 3600;
 
-async function getTreatments(): Promise<Product[]> {
+async function getBookingData(): Promise<{ treatments: Product[]; categories: Category[] }> {
   const client = getServerClient();
-  const r = await client.catalogue.getProducts(
-    { limit: 50 },
-    { cacheOptions: { revalidate: 3600, tags: [tags.products()] } },
-  );
-  if (!r.ok) return [];
+  const [productsRes, categoriesRes] = await Promise.all([
+    client.catalogue.getProducts(
+      { limit: 50 },
+      { cacheOptions: { revalidate: 3600, tags: [tags.products()] } },
+    ),
+    client.catalogue.getCategories({
+      cacheOptions: { revalidate: 3600, tags: [tags.categories()] },
+    }),
+  ]);
   // Booking flow only handles service-typed products.
-  return r.value.items.filter((p) => p.type === "service");
+  const treatments = productsRes.ok
+    ? productsRes.value.items.filter((p) => p.type === "service")
+    : [];
+  const serviceCategoryIds = new Set(treatments.map((t) => t.category_id).filter(Boolean));
+  const categories = categoriesRes.ok
+    ? categoriesRes.value.filter((c) => serviceCategoryIds.has(c.id))
+    : [];
+  return { treatments, categories };
 }
 
 export default async function BookPage() {
-  const treatments = await getTreatments();
+  const { treatments, categories } = await getBookingData();
   return (
     <article className="spabox-page">
       <div className="spabox-shell max-w-[1120px]">
@@ -40,7 +51,7 @@ export default async function BookPage() {
         </header>
 
         <Suspense fallback={<BookSkeleton />}>
-          <BookClient treatments={treatments} />
+          <BookClient treatments={treatments} categories={categories} />
         </Suspense>
       </div>
     </article>

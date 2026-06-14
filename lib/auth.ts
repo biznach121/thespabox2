@@ -5,7 +5,7 @@ import {
   getSessionFromCookieHeader,
   type CimplifyClient,
   type CimplifySession,
-} from "@cimplify/sdk/server";
+} from "@/lib/sdk-server";
 
 const CLIENT_ID = process.env.CIMPLIFY_CLIENT_ID ?? "";
 const ISSUER = process.env.CIMPLIFY_ISSUER;
@@ -32,4 +32,4 @@ export async function getAuthenticatedServerClient(): Promise<CimplifyClient> {
   return getServerClient({ accessToken });
 }
 
-export type { CimplifySession } from "@cimplify/sdk/server";
+export type { CimplifySession } from "@/lib/sdk-server";

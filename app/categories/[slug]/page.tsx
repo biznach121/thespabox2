@@ -7,7 +7,7 @@ import {
   tags,
   type Category,
   type Product,
-} from "@cimplify/sdk/server";
+} from "@/lib/sdk-server";
 import { ListingClient } from "./listing-client";
 import { brand } from "@/lib/brand";
 

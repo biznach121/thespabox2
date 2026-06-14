@@ -1,4 +1,4 @@
-import { buildSignoutCookies } from "@cimplify/sdk/server";
+import { buildSignoutCookies } from "@/lib/sdk-server";
 
 const CLIENT_ID = process.env.CIMPLIFY_CLIENT_ID ?? "";
 

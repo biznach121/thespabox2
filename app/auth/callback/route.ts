@@ -1,4 +1,4 @@
-import { handleOidcCallback, handleRedirectCallback } from "@cimplify/sdk/server";
+import { handleOidcCallback, handleRedirectCallback } from "@/lib/sdk-server";
 
 const CLIENT_ID = process.env.CIMPLIFY_CLIENT_ID ?? "";
 const ISSUER = process.env.CIMPLIFY_ISSUER;

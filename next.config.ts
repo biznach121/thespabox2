@@ -31,6 +31,12 @@ if (STOREFRONT_URL === "http://127.0.0.1:8787") {
   );
 }
 
+// DEMO_MODE serves /api/v1 (and friends) from an in-process seeded mock via
+// app/api/v1/[...path]/route.ts — see lib/demo-mode.ts. Skip the proxy so the
+// route handler answers. In live mode we proxy same-origin to the real
+// storefront API. Proxies run as `beforeFiles` so they win over route handlers.
+const DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE === "1";
+
 // Cache Components ('use cache' + cacheTag/cacheLife) require Node-specific
 // setTimeout atomicity and serialize a postponed state that routinely exceeds
 // CF Workers' 128MB zlib limit. We're on Cloudflare Workers via opennext, so
@@ -45,12 +51,15 @@ const nextConfig: NextConfig = {
     ];
   },
   async rewrites() {
-    return [
-      { source: "/api/v1/:path*", destination: `${STOREFRONT_URL}/api/v1/:path*` },
-      { source: "/img/:path*", destination: `${STOREFRONT_URL}/img/:path*` },
-      { source: "/elements/:path*", destination: `${STOREFRONT_URL}/elements/:path*` },
-      { source: "/_mock/:path*", destination: `${STOREFRONT_URL}/_mock/:path*` },
-    ];
+    if (DEMO_MODE) return { beforeFiles: [] };
+    return {
+      beforeFiles: [
+        { source: "/api/v1/:path*", destination: `${STOREFRONT_URL}/api/v1/:path*` },
+        { source: "/img/:path*", destination: `${STOREFRONT_URL}/img/:path*` },
+        { source: "/elements/:path*", destination: `${STOREFRONT_URL}/elements/:path*` },
+        { source: "/_mock/:path*", destination: `${STOREFRONT_URL}/_mock/:path*` },
+      ],
+    };
   },
   images: {
     loader: "custom",

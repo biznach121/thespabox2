@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Fraunces } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
-import { getServerClient, tags } from "@cimplify/sdk/server";
+import { getServerClient, tags } from "@/lib/sdk-server";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { ProductModal } from "@/components/product-modal";

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getServerClient, tags, type Product } from "@cimplify/sdk/server";
+import { getServerClient, tags, type Product } from "@/lib/sdk-server";
 import { Hero } from "@/components/hero";
 import { WellnessManifesto } from "@/components/wellness-manifesto";
 // import { ServicesIntro } from "@/components/services-intro";

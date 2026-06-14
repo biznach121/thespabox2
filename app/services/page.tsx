@@ -1,46 +1,61 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { getServerClient, tags, type Product } from "@cimplify/sdk/server";
-import { BookClient } from "@/app/book/book-client";
+import Link from "next/link";
+import { getServerClient, tags, type Category, type Product } from "@/lib/sdk-server";
+import { ServicesClient } from "./services-client";
 import { brand } from "@/lib/brand";
 
 export const metadata: Metadata = {
   title: `Services — ${brand.name}`,
-  description: `Book live services from ${brand.name}.`,
+  description: `Browse and book live services from ${brand.name}.`,
 };
 
 export const revalidate = 3600;
 
-async function getServices(): Promise<Product[]> {
+async function getServicesData(): Promise<{ services: Product[]; categories: Category[] }> {
   const client = getServerClient();
-  const result = await client.catalogue.getProducts(
-    { limit: 100 },
-    { cacheOptions: { revalidate: 3600, tags: [tags.products()] } },
+  const [productsRes, categoriesRes] = await Promise.all([
+    client.catalogue.getProducts(
+      { limit: 100 },
+      { cacheOptions: { revalidate: 3600, tags: [tags.products()] } },
+    ),
+    client.catalogue.getCategories({
+      cacheOptions: { revalidate: 3600, tags: [tags.categories()] },
+    }),
+  ]);
+  const services = productsRes.ok
+    ? productsRes.value.items.filter((product) => product.type === "service")
+    : [];
+  // Only surface categories that actually contain services.
+  const serviceCategoryIds = new Set(
+    services.map((service) => service.category_id).filter(Boolean),
   );
-  if (!result.ok) return [];
-  return result.value.items.filter((product) => product.type === "service");
+  const categories = categoriesRes.ok
+    ? categoriesRes.value.filter((category) => serviceCategoryIds.has(category.id))
+    : [];
+  return { services, categories };
 }
 
 export default async function ServicesPage() {
-  const services = await getServices();
+  const { services, categories } = await getServicesData();
 
   return (
     <article className="spabox-page">
-      <div className="spabox-shell max-w-[1120px]">
+      <div className="spabox-shell max-w-[1320px]">
         <header className="spabox-hero mb-8">
           <p className="spabox-eyebrow">Services</p>
-          <h1 className="spabox-title">
-            Choose a service.
-            <br />
-            Book a slot.
-          </h1>
+          <h1 className="spabox-title">Browse our treatments.</h1>
           <p className="spabox-lede">
-            See only bookable services here. Products stay separate on the products page.
+            Search the full menu, filter by category and duration, then{" "}
+            <Link href="/book" className="font-semibold text-[#402720] underline-offset-4 hover:underline">
+              book a time
+            </Link>
+            .
           </p>
         </header>
 
         <Suspense fallback={<ServicesSkeleton />}>
-          <BookClient treatments={services} />
+          <ServicesClient services={services} categories={categories} />
         </Suspense>
       </div>
     </article>
@@ -49,19 +64,15 @@ export default async function ServicesPage() {
 
 function ServicesSkeleton() {
   return (
-    <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_1.4fr]">
-      <div className="space-y-2">
-        {Array.from({ length: 5 }).map((_, index) => (
-          <div key={index} className="h-16 animate-pulse rounded-2xl bg-muted" />
-        ))}
+    <div>
+      <div className="mb-6 flex gap-3">
+        <div className="h-12 flex-1 animate-pulse rounded-full bg-muted" />
+        <div className="h-12 w-28 animate-pulse rounded-full bg-muted" />
       </div>
-      <div className="rounded-2xl border border-border bg-card p-8">
-        <div className="mb-4 h-5 w-40 animate-pulse rounded bg-muted" />
-        <div className="grid grid-cols-3 gap-2">
-          {Array.from({ length: 9 }).map((_, index) => (
-            <div key={index} className="h-10 animate-pulse rounded bg-muted" />
-          ))}
-        </div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <div key={index} className="aspect-[1.05] animate-pulse rounded-[24px] bg-muted" />
+        ))}
       </div>
     </div>
   );

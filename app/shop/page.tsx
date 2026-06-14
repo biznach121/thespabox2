@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getServerClient, tags } from "@cimplify/sdk/server";
+import { getServerClient, tags } from "@/lib/sdk-server";
 import { ShopClient } from "./shop-client";
 import { brand } from "@/lib/brand";
 

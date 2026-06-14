@@ -1,4 +1,4 @@
-import { getServerClient, tags, type Product } from "@cimplify/sdk/server";
+import { getServerClient, tags, type Product } from "@/lib/sdk-server";
 import { brand } from "@/lib/brand";
 import { getSiteUrl } from "@/lib/site-url";
 
