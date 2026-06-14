@@ -5,7 +5,7 @@
     "": {
       "name": "__STOREFRONT_NAME__",
       "dependencies": {
-        "@cimplify/sdk": "^0.72.0",
+        "@cimplify/sdk": "^0.83.0",
         "next": "^16.2.6",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
@@ -32,7 +32,7 @@
 
     "@base-ui/utils": ["@base-ui/utils@0.2.9", "", { "dependencies": { "@babel/runtime": "^7.29.2", "@floating-ui/utils": "^0.2.11", "reselect": "^5.1.1", "use-sync-external-store": "^1.6.0" }, "peerDependencies": { "@types/react": "^17 || ^18 || ^19", "react": "^17 || ^18 || ^19", "react-dom": "^17 || ^18 || ^19" }, "optionalPeers": ["@types/react"] }, "sha512-x/PDDCYzoqPpjrdyb3VcyylTI2IjUXEtYDGi5foh7KsnmNJIIaVwA2GLgDH1dps1GgXiJbA60hM+AyuTfQzIvw=="],
 
-    "@cimplify/sdk": ["@cimplify/sdk@0.72.0", "", { "dependencies": { "@base-ui/react": "^1.4.1", "clsx": "^2.1.1", "date-fns": "^4.1.0", "jose": "^6.2.3", "libphonenumber-js": "1.12.41", "react-day-picker": "^9.14.0", "tailwind-merge": "^3.5.0", "xss": "^1.0.15", "zod": "^4.4.3" }, "peerDependencies": { "@paystack/inline-js": "^2.22.8", "msw": ">=2.0.0", "react": ">=17.0.0", "vitest": ">=2.0.0" }, "optionalPeers": ["@paystack/inline-js", "msw", "react", "vitest"], "bin": { "cimplify-mock": "dist/mock/cli.mjs" } }, "sha512-FiyuBY5HBwTJqi6ed4YCFn2NvJ6H/UF8Jtl4ALcIswZ/QYWlqgM0gqestMcyA23gHS8mbffK77HaQaFwYoEkjA=="],
+    "@cimplify/sdk": ["@cimplify/sdk@0.83.0", "", { "dependencies": { "@base-ui/react": "^1.4.1", "clsx": "^2.1.1", "date-fns": "^4.1.0", "jose": "^6.2.3", "libphonenumber-js": "1.12.41", "react-day-picker": "^9.14.0", "tailwind-merge": "^3.5.0", "xss": "^1.0.15", "zod": "^4.4.3" }, "peerDependencies": { "@paystack/inline-js": "^2.22.8", "msw": ">=2.0.0", "react": ">=17.0.0", "react-dom": ">=17.0.0", "vitest": ">=2.0.0" }, "optionalPeers": ["@paystack/inline-js", "msw", "react", "react-dom", "vitest"], "bin": { "cimplify-mock": "dist/mock/cli.mjs" } }, "sha512-+MoQeNuW+mCt4p8+eeAvnIdJWuTG016x9kswq0paiwk7/VxKU+Cz3SKLm0VaPG6MRDzG5WOEoh0d3y0VghKz5g=="],
 
     "@date-fns/tz": ["@date-fns/tz@1.4.1", "", {}, "sha512-P5LUNhtbj6YfI3iJjw5EL9eUAG6OitD0W3fWQcpQjDRc/QIsL0tRNuO1PcDvPccWL1fSTXXdE1ds+l95DV/OFA=="],
 
