@@ -92,7 +92,8 @@
 
   .spabox-page {
     min-height: calc(100svh - 120px);
-    background: #e8e5dd;
+    /* Page colour lives on `main` (see the contour-backdrop block at the end
+       of this file) so the animated backdrop can sit between them. */
     color: #402720;
   }
 
@@ -409,11 +410,6 @@
     }
   }
 
-  .wellness-manifesto svg path {
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-  }
-
   .wellness-float-frame,
   .wellness-note {
     opacity: 0;
@@ -435,22 +431,6 @@
 
   .wellness-note {
     transform: translate3d(0, 18px, 0);
-  }
-
-  .wellness-manifesto.is-visible svg path {
-    animation: wellness-line-draw 9s cubic-bezier(0.58, 0, 0.18, 1) infinite both;
-  }
-
-  .wellness-manifesto.is-visible svg path:nth-child(2) {
-    animation-delay: 0.95s;
-  }
-
-  .wellness-manifesto.is-visible svg path:nth-child(3) {
-    animation-delay: 1.75s;
-  }
-
-  .wellness-manifesto.is-visible svg path:nth-child(4) {
-    animation-delay: 2.45s;
   }
 
   .wellness-manifesto.is-visible .wellness-float-frame {
@@ -626,11 +606,6 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .wellness-manifesto svg path {
-      stroke-dashoffset: 0;
-      animation: none !important;
-    }
-
     .wellness-float-frame,
     .wellness-float-image,
     .wellness-note,
@@ -765,5 +740,207 @@
       filter: none;
       animation: none !important;
     }
+  }
+}
+
+/* ── Booking widget (SDK <DateSlotPicker>/<SlotPicker>) ──────────────────────
+   Styled via the SDK's stable data-cimplify-* attributes so it applies
+   everywhere the widget renders (product modal + /book). Deliberately
+   UNLAYERED: these must win over the SDK's own utility classes. */
+
+[data-cimplify-date-slot-picker] {
+  gap: 1.1rem;
+}
+
+[data-cimplify-date-nav-prev],
+[data-cimplify-date-nav-next] {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(64, 39, 32, 0.14);
+  background: #f3f0e8;
+  color: #402720;
+}
+
+[data-cimplify-date-nav-prev]:hover:not(:disabled),
+[data-cimplify-date-nav-next]:hover:not(:disabled) {
+  background: #d8d3c5;
+  color: #402720;
+}
+
+[data-cimplify-date-strip] {
+  gap: 0.5rem;
+  /* 5 visible days (7 was too cramped, especially on mobile). The SDK's
+     built-in picker in the product modal is hardcoded to 7 days and takes no
+     prop, so the last two chips are hidden; /book passes daysToShow={5}. */
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+[data-cimplify-date-button]:nth-child(n + 6) {
+  display: none;
+}
+
+[data-cimplify-date-button] {
+  min-height: 3.75rem;
+  border-radius: 1.1rem;
+  border: 1px solid rgba(64, 39, 32, 0.12);
+  background: rgba(243, 240, 232, 0.72);
+  padding: 0.6rem 0.3rem;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #402720;
+  transition: border-color 0.15s ease, background-color 0.15s ease,
+    color 0.15s ease, box-shadow 0.15s ease;
+}
+
+[data-cimplify-date-button]:hover {
+  border-color: rgba(64, 39, 32, 0.4);
+  background: #f3f0e8;
+}
+
+[data-cimplify-date-button][data-selected] {
+  border-color: #402720;
+  background: #402720;
+  color: #f3f0e8;
+  box-shadow: 0 12px 26px rgba(64, 39, 32, 0.22);
+}
+
+[data-cimplify-date-button][data-fully-booked] {
+  opacity: 0.35;
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
+
+[data-cimplify-slot-group-label] {
+  color: #82785f;
+}
+
+[data-cimplify-slot] {
+  border-radius: 9999px;
+  border: 1px solid rgba(64, 39, 32, 0.14);
+  background: #f3f0e8;
+  color: #402720;
+  font-weight: 600;
+  padding: 0.55rem 0.6rem;
+  transition: border-color 0.15s ease, background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+[data-cimplify-slot]:hover:not([data-unavailable]) {
+  border-color: rgba(64, 39, 32, 0.4);
+}
+
+[data-cimplify-slot][data-selected] {
+  border-color: #402720;
+  background: #402720;
+  color: #f3f0e8;
+}
+
+[data-cimplify-slot][data-unavailable] {
+  opacity: 0.35;
+  text-decoration: line-through;
+}
+
+/* Body scroll lock for the storefront's own overlays (product modal, filter
+   drawer) — see components/use-body-scroll-lock.ts for why this is an
+   attribute instead of an inline style. */
+body[data-scroll-locked] {
+  overflow: hidden;
+}
+
+/* ── Animated contour backdrop (components/contour-backdrop.tsx) ─────────────
+   `main` carries the page colour and isolates a stacking context so the
+   fixed backdrop (z -1) paints above the background but under all content. */
+
+main {
+  position: relative;
+  isolation: isolate;
+  background: #e8e5dd;
+}
+
+/* Vines (page backdrop + home sections): each stem draws in once (duration/
+   delay inline per stem, matched to its length); leaves and petals pop from
+   scale 0 as the draw passes them, then the sprout sways gently forever.
+   Nothing un-draws — the growth is the show, the grown vine is the texture. */
+.vine-stem {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: vine-draw linear forwards;
+}
+
+@keyframes vine-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.vine-leaf,
+.vine-petal,
+.vine-bud {
+  transform: scale(0);
+  transform-origin: 0 0;
+  animation: vine-pop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes vine-pop {
+  to {
+    transform: scale(1);
+  }
+}
+
+.vine-sway {
+  transform-origin: 0 0;
+  animation: vine-sway 6.5s ease-in-out infinite alternate;
+}
+
+@keyframes vine-sway {
+  from {
+    transform: rotate(-2.2deg);
+  }
+  to {
+    transform: rotate(2.2deg);
+  }
+}
+
+/* Home-section vines wait for their section to scroll into view: animations
+   start paused and resume when the section's IntersectionObserver adds
+   .is-visible (same mechanism the wellness reveals use). */
+.vine-gated .vine-stem,
+.vine-gated .vine-leaf,
+.vine-gated .vine-petal,
+.vine-gated .vine-bud,
+.vine-gated .vine-sway {
+  animation-play-state: paused;
+}
+
+.is-visible .vine-gated .vine-stem,
+.is-visible .vine-gated .vine-leaf,
+.is-visible .vine-gated .vine-petal,
+.is-visible .vine-gated .vine-bud,
+.is-visible .vine-gated .vine-sway {
+  animation-play-state: running;
+}
+
+/* The home page draws its own lines in its sections — skip the backdrop. */
+body:has(.spa-video-hero) .contour-backdrop {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vine-stem,
+  .vine-leaf,
+  .vine-petal,
+  .vine-bud,
+  .vine-sway {
+    animation: none;
+  }
+  .vine-stem {
+    stroke-dashoffset: 0;
+  }
+  .vine-leaf,
+  .vine-petal,
+  .vine-bud {
+    transform: scale(1);
   }
 }

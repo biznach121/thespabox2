@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { HeroAuthLink } from "./hero-auth-link";
 import { HeroCartButton, HeroCartButtonSkeleton } from "./hero-cart-button";
+import { NavDropdown, type NavMenu } from "./nav-dropdown";
 import { SpaBoxLogo } from "./spa-box-logo";
 
 const HERO_TEXT_LINK =
@@ -16,6 +17,7 @@ interface HeroProps {
   videoUrl?: string;
   videoUrls?: string[];
   nav: { label: string; href: string }[];
+  menus?: NavMenu[];
   phone: string;
   phoneTel: string;
 }
@@ -28,6 +30,7 @@ export function Hero({
   videoUrl,
   videoUrls,
   nav,
+  menus = [],
   phone,
   phoneTel,
 }: HeroProps) {
@@ -67,11 +70,23 @@ export function Hero({
       <div className="relative z-10 flex h-full flex-col px-5 py-5 sm:px-8 md:px-10 lg:px-14">
         <div className="flex flex-col items-center gap-3 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:items-start lg:gap-5">
           <nav className="hidden items-center gap-7 pt-4 text-[12px] font-medium uppercase text-white/70 lg:flex">
-            {nav.map((link) => (
-              <Link key={link.href} href={link.href} className="transition-colors hover:text-white">
-                {link.label}
-              </Link>
-            ))}
+            {nav.map((link) => {
+              const item = (
+                <Link href={link.href} className="transition-colors hover:text-white">
+                  {link.label}
+                </Link>
+              );
+              const menu = menus.find((m) => m.href === link.href);
+              return menu ? (
+                <NavDropdown key={link.href} menu={menu} tone="light" align="left">
+                  {item}
+                </NavDropdown>
+              ) : (
+                <span key={link.href} className="flex items-center">
+                  {item}
+                </span>
+              );
+            })}
           </nav>
 
           <Link href="/" className="justify-self-center text-white/90 transition-colors hover:text-white">

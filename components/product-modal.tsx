@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { ProductSheet, useProduct, useCart } from "@cimplify/sdk/react";
+import { useBodyScrollLock } from "@/components/use-body-scroll-lock";
 import { withDefaultVariant } from "@/lib/cart-options";
 
 /**
@@ -21,14 +22,7 @@ export function ProductModal() {
   const { product } = useProduct(slug ?? "", { enabled: Boolean(slug) });
   const { addItem } = useCart();
 
-  useEffect(() => {
-    if (!slug) return;
-    const original = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = original;
-    };
-  }, [slug]);
+  useBodyScrollLock(Boolean(slug));
 
   useEffect(() => {
     if (!slug) return;

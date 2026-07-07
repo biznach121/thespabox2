@@ -1,5 +1,6 @@
 import "server-only";
 import { createMockApp, makeSeedContext } from "@cimplify/sdk/mock";
+import { availabilityForRange, slotsForDay } from "./scheduling";
 
 /**
  * Seeded in-process mock backend for DEMO_MODE.
@@ -18,7 +19,12 @@ import { createMockApp, makeSeedContext } from "@cimplify/sdk/mock";
  * deterministic and only an in-progress cart could reset.
  */
 
-type MockApp = ReturnType<typeof createMockApp>["app"];
+// The route handler and the server client only ever call `.fetch`, so the
+// shared instance is exposed as that minimal surface — it lets build() wrap
+// the mock with demo-scheduling overrides (see below).
+type MockApp = {
+  fetch(request: Request): Promise<Response>;
+};
 
 // Brand-consistent take-home products (images reused from lib/brand.ts).
 const IMG = "https://res.cloudinary.com/dcc5ggnkc/image/upload";
@@ -117,7 +123,72 @@ function build(): MockApp {
     }
   }
 
-  return app;
+  const durationOf = (serviceId: string): number => {
+    const svc = serviceStore?.get(serviceId) as { duration_minutes?: number } | undefined;
+    return svc?.duration_minutes ?? 60;
+  };
+
+  // Cart lines come back with add-on entries keyed `option_id`, but the SDK's
+  // cart hooks read `option.id` (React keys + lookups), which triggers
+  // missing-key warnings in the cart drawer. Alias it on every cart response.
+  const aliasAddOnIds = (node: unknown): void => {
+    if (Array.isArray(node)) {
+      node.forEach(aliasAddOnIds);
+      return;
+    }
+    if (!node || typeof node !== "object") return;
+    const record = node as Record<string, unknown>;
+    if (Array.isArray(record.add_on_options)) {
+      for (const opt of record.add_on_options) {
+        if (opt && typeof opt === "object" && opt.id == null && opt.option_id != null) {
+          opt.id = opt.option_id;
+        }
+      }
+    }
+    for (const value of Object.values(record)) aliasAddOnIds(value);
+  };
+
+  // The stock mock ignores the requested date when listing slots and returns
+  // the wrong shape for the day-availability range — so the booking widget
+  // showed "No available slots" almost everywhere. Answer both scheduling
+  // reads with lib/demo/scheduling.ts instead; everything else passes through.
+  return {
+    async fetch(request: Request) {
+      const url = new URL(request.url);
+      if (request.method === "GET") {
+        const serviceId = url.searchParams.get("service_id") ?? "";
+        if (url.pathname.endsWith("/scheduling/availability")) {
+          return Response.json({
+            service_id: serviceId,
+            availability: availabilityForRange(
+              serviceId,
+              url.searchParams.get("start_date"),
+              url.searchParams.get("end_date"),
+              durationOf(serviceId),
+            ),
+          });
+        }
+        if (url.pathname.endsWith("/scheduling/slots")) {
+          return Response.json(
+            slotsForDay(serviceId, url.searchParams.get("date"), durationOf(serviceId)),
+          );
+        }
+      }
+
+      const response = await app.fetch(request);
+      if (
+        url.pathname.includes("/cart") &&
+        (response.headers.get("content-type") ?? "").includes("json")
+      ) {
+        const body = await response.json();
+        aliasAddOnIds(body);
+        const headers = new Headers(response.headers);
+        headers.delete("content-length");
+        return new Response(JSON.stringify(body), { status: response.status, headers });
+      }
+      return response;
+    },
+  };
 }
 
 // Persist across module reloads / HMR so the route handler and the server

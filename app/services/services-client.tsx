@@ -4,7 +4,6 @@ import { useMemo, useState } from "react";
 import type { Category, Product } from "@cimplify/sdk";
 import { StoreProductCard } from "@/components/store-product-card";
 import {
-  ChevronIcon,
   FilterGroup,
   FilterIcon,
   FilterPill,
@@ -12,6 +11,8 @@ import {
   SearchIcon,
   ToggleChip,
 } from "@/components/filters-drawer";
+import { useTypewriterPlaceholder } from "@/components/use-typewriter-placeholder";
+import { brand } from "@/lib/brand";
 import {
   DURATION_BUCKETS,
   SORT_OPTIONS,
@@ -31,6 +32,9 @@ export function ServicesClient({
   const [duration, setDuration] = useState("any");
   const [sort, setSort] = useState<ServiceSortKey>("recommended");
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const searchPlaceholder = useTypewriterPlaceholder(brand.search.suggestions, {
+    prefix: brand.search.placeholderPrefix,
+  });
 
   const activeFilterCount = selectedCategories.size + (duration !== "any" ? 1 : 0);
 
@@ -70,7 +74,7 @@ export function ServicesClient({
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search treatments…"
+            placeholder={searchPlaceholder}
             className="h-12 w-full rounded-full border border-[#402720]/14 bg-[#f3f0e8] pl-12 pr-4 text-sm font-medium text-[#402720] outline-none transition-colors placeholder:text-[#82785f] focus:border-[#402720]/40"
           />
         </label>
@@ -91,22 +95,6 @@ export function ServicesClient({
               </span>
             )}
           </button>
-
-          <label className="relative hidden sm:block">
-            <span className="sr-only">Sort services</span>
-            <select
-              value={sort}
-              onChange={(event) => setSort(event.target.value as ServiceSortKey)}
-              className="h-12 appearance-none rounded-full border border-[#402720]/14 bg-[#f3f0e8] pl-5 pr-10 text-sm font-semibold text-[#402720] outline-none transition-colors hover:border-[#402720]/40 focus:border-[#402720]/40"
-            >
-              {SORT_OPTIONS.map((option) => (
-                <option key={option.key} value={option.key}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-            <ChevronIcon className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#82785f]" />
-          </label>
         </div>
       </div>
 
@@ -201,7 +189,6 @@ export function ServicesClient({
           </div>
         </FilterGroup>
 
-        {/* Sort lives in the toolbar on desktop; expose it here for mobile. */}
         <FilterGroup title="Sort by">
           <div className="flex flex-wrap gap-2">
             {SORT_OPTIONS.map((option) => (

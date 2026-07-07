@@ -13,6 +13,7 @@ import {
   SearchIcon,
   ToggleChip,
 } from "@/components/filters-drawer";
+import { useTypewriterPlaceholder } from "@/components/use-typewriter-placeholder";
 import {
   DURATION_BUCKETS,
   SORT_OPTIONS,
@@ -48,6 +49,9 @@ export function BookClient({
   const [duration, setDuration] = useState("any");
   const [sort, setSort] = useState<ServiceSortKey>("recommended");
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const searchPlaceholder = useTypewriterPlaceholder(brand.search.suggestions, {
+    prefix: brand.search.placeholderPrefix,
+  });
 
   const activeFilterCount = selectedCategories.size + (duration !== "any" ? 1 : 0);
 
@@ -134,7 +138,7 @@ export function BookClient({
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search treatments…"
+            placeholder={searchPlaceholder}
             className="h-11 w-full rounded-full border border-[#402720]/14 bg-[#f3f0e8] pl-12 pr-4 text-sm font-medium text-[#402720] outline-none transition-colors placeholder:text-[#82785f] focus:border-[#402720]/40"
           />
         </label>
@@ -163,8 +167,8 @@ export function BookClient({
           {filtered.length} treatment{filtered.length === 1 ? "" : "s"}
         </p>
 
-        {/* Scrollable list so it never runs off the page */}
-        <div className="-mr-1 max-h-[320px] space-y-2 overflow-y-auto pr-1 lg:max-h-[560px]">
+        {/* Scrollable list so it never runs off the page (scrollbar hidden) */}
+        <div className="no-scrollbar max-h-[420px] space-y-2 overflow-y-auto lg:max-h-[560px]">
           {filtered.length === 0 ? (
             <div className="rounded-[18px] border border-dashed border-[#402720]/20 p-6 text-center">
               <p className="m-0 text-sm font-medium text-[#4d362f]/72">No treatments match.</p>
@@ -198,17 +202,25 @@ export function BookClient({
                   ].join(" ")}
                 >
                   <div className="flex items-center justify-between gap-3">
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <p className="m-0 truncate text-sm font-semibold">{treatment.name}</p>
-                      <p className={`m-0 text-xs ${active ? "text-[#f3f0e8]/72" : "text-[#4d362f]/68"}`}>
+                      <p className={`m-0 mt-0.5 text-xs ${active ? "text-[#f3f0e8]/72" : "text-[#4d362f]/68"}`}>
                         {treatment.duration_minutes ? `${treatment.duration_minutes} min · ` : ""}
                         {brand.currency} {treatment.default_price}
                       </p>
                     </div>
                     {active && (
-                      <span className="grid h-6 w-6 place-items-center rounded-full bg-[#f3f0e8] text-xs text-[#402720]">
+                      <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-[#f3f0e8] text-xs text-[#402720]">
                         ✓
                       </span>
+                    )}
+                    {treatment.image_url && (
+                      <img
+                        src={treatment.image_url}
+                        alt=""
+                        loading="lazy"
+                        className="h-16 w-16 shrink-0 rounded-[14px] object-cover"
+                      />
                     )}
                   </div>
                 </button>
@@ -225,7 +237,7 @@ export function BookClient({
             serviceId={selectedTreatment.id}
             selectedSlot={selectedSlot}
             onSlotSelect={(slot) => setSelectedSlot(slot)}
-            daysToShow={selectedTreatment.scheduling_mode === "multi_day" ? 14 : 7}
+            daysToShow={5}
             schedulingMode={selectedTreatment.scheduling_mode}
             durationUnit={selectedTreatment.duration_unit}
             durationValue={selectedTreatment.duration_value}

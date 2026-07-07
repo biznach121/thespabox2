@@ -31,7 +31,16 @@ export interface Brand {
     supportEmail?: string; businessEmail?: string; hours: string;
   };
   socials: BrandSocial[];
-  header: { nav: { label: string; href: string }[] };
+  header: {
+    nav: { label: string; href: string }[];
+    /* Hover mega-menus: which nav links get a dropdown of catalogue items. */
+    menus: {
+      href: string;
+      type: "service" | "product";
+      eyebrow: string;
+      viewAllLabel: string;
+    }[];
+  };
   hero: {
     badge: string; title: string; subtitle: string;
     primaryCtaLabel: string;
@@ -53,6 +62,7 @@ export interface Brand {
     }[];
   };
   servicesIntro: { title: string };
+  search: { placeholderPrefix: string; suggestions: string[] };
   serviceBands: {
     title: string;
     ctaLabel: string;
@@ -165,6 +175,20 @@ export const brand: Brand = {
       { label: "Services", href: "/services" },
       { label: "Location", href: "/location" },
     ],
+    menus: [
+      {
+        href: "/products",
+        type: "product",
+        eyebrow: "Shop favourites",
+        viewAllLabel: "View all products",
+      },
+      {
+        href: "/services",
+        type: "service",
+        eyebrow: "Popular treatments",
+        viewAllLabel: "View all services",
+      },
+    ],
   },
 
   hero: {
@@ -266,6 +290,20 @@ export const brand: Brand = {
 
   servicesIntro: {
     title: "services",
+  },
+
+  search: {
+    placeholderPrefix: "Search ",
+    suggestions: [
+      "deep tissue massage",
+      "hydrating facial",
+      "gel manicure",
+      "hot stone massage",
+      "lash extensions",
+      "body scrub",
+      "pedicure",
+      "aromatherapy",
+    ],
   },
 
   serviceBands: [

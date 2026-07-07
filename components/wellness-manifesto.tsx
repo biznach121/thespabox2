@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { brand } from "@/lib/brand";
+import { WellnessVines } from "@/components/home-vines";
 
 export function WellnessManifesto() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -57,7 +58,7 @@ export function WellnessManifesto() {
       ref={sectionRef}
       className="wellness-manifesto relative isolate overflow-hidden bg-[#e8e5dd] px-5 pb-20 pt-20 text-[#402720] sm:px-8 md:min-h-[1580px] md:pb-24 md:pt-28 lg:min-h-[1540px] lg:px-12"
     >
-      <ContourLines />
+      <WellnessVines />
 
       <div className="relative mx-auto max-w-[1220px] md:min-h-[1450px]">
         <div className="absolute left-1/2 top-0 h-[1040px] w-[1040px] -translate-x-1/2 rounded-full bg-[#d8d3c5] max-lg:h-[88vw] max-lg:w-[88vw] max-md:hidden" />
@@ -193,39 +194,3 @@ export function WellnessManifesto() {
   );
 }
 
-function ContourLines() {
-  return (
-    <svg
-      className="pointer-events-none absolute inset-0 z-0 h-full w-full text-[#8b8174]/28"
-      viewBox="0 0 1440 1720"
-      fill="none"
-      aria-hidden="true"
-      preserveAspectRatio="none"
-    >
-      <path
-        d="M-92 616C135 742 304 754 472 667C644 578 743 529 941 602C1098 660 1279 686 1455 521"
-        stroke="currentColor"
-        strokeWidth="1"
-        pathLength="1"
-      />
-      <path
-        d="M-84 1017C172 839 407 847 590 973C727 1067 853 1078 995 980C1131 886 1286 906 1469 1048"
-        stroke="currentColor"
-        strokeWidth="1"
-        pathLength="1"
-      />
-      <path
-        d="M932 1269C1071 1183 1263 1203 1328 1331C1379 1432 1328 1550 1195 1563C1071 1575 979 1500 1012 1405C1045 1311 1194 1323 1266 1407"
-        stroke="currentColor"
-        strokeWidth="1"
-        pathLength="1"
-      />
-      <path
-        d="M493 420C545 332 677 340 705 436C731 524 630 593 553 542C493 502 494 421 554 383"
-        stroke="currentColor"
-        strokeWidth="1"
-        pathLength="1"
-      />
-    </svg>
-  );
-}

@@ -8,6 +8,7 @@ import { ServiceHighlights } from "@/components/service-highlights";
 import { QualityProducts } from "@/components/quality-products";
 import { MediaGallery } from "@/components/media-gallery";
 import { brand } from "@/lib/brand";
+import { getNavMenus } from "@/lib/nav-menus";
 
 export const metadata: Metadata = {
   title: `${brand.name} — ${brand.hero.title.replace(/\s+/g, " ")}`,
@@ -26,7 +27,7 @@ async function getFeaturedProducts(): Promise<Product[]> {
 }
 
 export default async function HomePage() {
-  const featuredProducts = await getFeaturedProducts();
+  const [featuredProducts, navMenus] = await Promise.all([getFeaturedProducts(), getNavMenus()]);
 
   return (
     <>
@@ -39,6 +40,7 @@ export default async function HomePage() {
         videoUrl={brand.hero.videoUrl}
         videoUrls={brand.hero.videoUrls}
         nav={brand.header.nav}
+        menus={navMenus}
         phone={brand.contact.phone}
         phoneTel={brand.contact.phoneTel}
       />

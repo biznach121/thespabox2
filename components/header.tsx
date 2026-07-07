@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { usePathname } from "next/navigation";
 import { NavLink } from "./nav-link";
+import { NavDropdown, type NavMenu } from "./nav-dropdown";
 import { CartPill, CartPillSkeleton } from "./cart-pill";
 import { MobileNav } from "./mobile-nav";
 import { AccountPill } from "./account-pill";
@@ -15,7 +16,7 @@ import { brand } from "@/lib/brand";
  * cache; the active-link styling and live cart count are dynamic islands
  * mounted in their own Suspense boundaries so the chrome never blocks.
  */
-export function Header() {
+export function Header({ menus = [] }: { menus?: NavMenu[] }) {
   const pathname = usePathname();
 
   if (pathname === "/") return null;
@@ -30,11 +31,23 @@ export function Header() {
       </Link>
       <div className="flex items-center gap-3 sm:gap-6">
         <nav className="hidden sm:flex items-center gap-6">
-          {brand.header.nav.map((link) => (
-            <Suspense key={link.href} fallback={<NavLinkFallback>{link.label}</NavLinkFallback>}>
-              <NavLink href={link.href}>{link.label}</NavLink>
-            </Suspense>
-          ))}
+          {brand.header.nav.map((link) => {
+            const item = (
+              <Suspense fallback={<NavLinkFallback>{link.label}</NavLinkFallback>}>
+                <NavLink href={link.href}>{link.label}</NavLink>
+              </Suspense>
+            );
+            const menu = menus.find((m) => m.href === link.href);
+            return menu ? (
+              <NavDropdown key={link.href} menu={menu}>
+                {item}
+              </NavDropdown>
+            ) : (
+              <span key={link.href} className="flex items-center">
+                {item}
+              </span>
+            );
+          })}
         </nav>
         <AccountPill />
         <Suspense fallback={<CartPillSkeleton />}>

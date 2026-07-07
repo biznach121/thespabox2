@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useBodyScrollLock } from "@/components/use-body-scroll-lock";
 
 /** Reusable slide-over filter drawer + chips, shared by /services and /book. */
 
@@ -20,18 +21,14 @@ export function FiltersDrawer({
   children: React.ReactNode;
 }) {
   // Lock body scroll + close on Escape while open.
+  useBodyScrollLock(open);
   useEffect(() => {
     if (!open) return;
-    const original = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose();
     };
     window.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = original;
-      window.removeEventListener("keydown", onKey);
-    };
+    return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
   return (
@@ -46,7 +43,7 @@ export function FiltersDrawer({
         role="dialog"
         aria-modal="true"
         aria-label="Filter services"
-        className={`absolute right-0 top-0 flex h-full w-[min(90vw,380px)] flex-col bg-[#f3f0e8] text-[#402720] shadow-[0_28px_90px_rgba(64,39,32,0.28)] transition-transform duration-300 ease-out ${
+        className={`absolute right-0 top-0 flex h-full w-[min(90vw,380px)] flex-col bg-[#f3f0e8] text-[#402720] shadow-[0_28px_90px_rgba(64,39,32,0.28)] transition-transform duration-300 ease-out md:w-[max(380px,45vw)] ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -65,7 +62,7 @@ export function FiltersDrawer({
           </button>
         </header>
 
-        <div className="flex-1 overflow-y-auto px-6 py-6">{children}</div>
+        <div className="no-scrollbar flex-1 overflow-y-auto px-6 py-6">{children}</div>
 
         <footer className="flex items-center gap-3 border-t border-[#402720]/12 px-6 py-4">
           <button

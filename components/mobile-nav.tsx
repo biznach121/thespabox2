@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { brand } from "@/lib/brand";
+import { useBodyScrollLock } from "@/components/use-body-scroll-lock";
 
 /**
  * Hamburger button + slide-in drawer for narrow viewports. Header hides
@@ -12,18 +13,14 @@ import { brand } from "@/lib/brand";
 export function MobileNav() {
   const [open, setOpen] = useState(false);
 
+  useBodyScrollLock(open);
   useEffect(() => {
     if (!open) return;
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") setOpen(false);
     };
     document.addEventListener("keydown", onKey);
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = previousOverflow;
-    };
+    return () => document.removeEventListener("keydown", onKey);
   }, [open]);
 
   return (

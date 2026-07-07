@@ -5,11 +5,13 @@ import { Providers } from "@/components/providers";
 import { getServerClient, tags } from "@/lib/sdk-server";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { ContourBackdrop } from "@/components/contour-backdrop";
 import { ProductModal } from "@/components/product-modal";
 import { CartDrawer } from "@/components/cart-drawer";
 import { OrganizationJsonLd } from "@/components/json-ld";
 import { Suspense } from "react";
 import { brand } from "@/lib/brand";
+import { getNavMenus } from "@/lib/nav-menus";
 import { getSiteUrl } from "@/lib/site-url";
 
 const inter = Inter({
@@ -44,9 +46,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const server = getServerClient();
-  const [bizResult, locResult] = await Promise.all([
+  const [bizResult, locResult, navMenus] = await Promise.all([
     server.business.getInfo({ cacheOptions: { revalidate: 3600, tags: [tags.business()] } }),
     server.business.getLocations({ cacheOptions: { revalidate: 3600, tags: [tags.locations()] } }),
+    getNavMenus(),
   ]);
   const initialBusiness = bizResult.ok ? bizResult.value : null;
   const initialLocations = locResult.ok ? locResult.value : [];
@@ -61,8 +64,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <OrganizationJsonLd />
         </Suspense>
         <Providers initialBusiness={initialBusiness} initialLocations={initialLocations}>
-          <Header />
+          <Header menus={navMenus} />
           <main className="flex-1 pb-12 w-full">
+            <ContourBackdrop />
             <Suspense fallback={null}>{children}</Suspense>
           </main>
           <Footer />

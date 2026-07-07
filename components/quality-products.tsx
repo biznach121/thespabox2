@@ -1,11 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { formatMoney, type Product as CatalogueProduct } from "@cimplify/sdk";
 import { useCart, useCartDrawer } from "@cimplify/sdk/react";
 import { brand } from "@/lib/brand";
+import { QualityVines } from "@/components/home-vines";
 import { withDefaultVariant } from "@/lib/cart-options";
 
 export function QualityProducts({
@@ -19,6 +20,30 @@ export function QualityProducts({
   );
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState<"next" | "previous">("next");
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // Start the gated vine growth when the section scrolls into view
+  // (same .is-visible convention as the wellness manifesto).
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    if (!("IntersectionObserver" in window)) {
+      section.classList.add("is-visible");
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          section.classList.add("is-visible");
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "0px 0px -15% 0px", threshold: 0.1 },
+    );
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
   const visible = useMemo(() => {
     if (products.length === 0) return [];
     if (products.length === 1) return [products[0]];
@@ -38,8 +63,8 @@ export function QualityProducts({
   };
 
   return (
-    <section className="relative isolate overflow-hidden bg-[#e8e5dd] px-4 pb-20 pt-12 text-[#402720] sm:px-8 lg:pb-28">
-      <Contour />
+    <section ref={sectionRef} className="relative isolate overflow-hidden bg-[#e8e5dd] px-4 pb-20 pt-12 text-[#402720] sm:px-8 lg:pb-28">
+      <QualityVines />
       <div className="relative z-10 mx-auto max-w-[1180px]">
         <div className="flex items-start justify-center">
           <h2 className="m-0 max-w-[820px] text-center font-serif text-[54px] font-light leading-[0.82] tracking-normal sm:text-[96px] lg:text-[112px]">
@@ -271,25 +296,3 @@ function CarouselButton({
   );
 }
 
-function Contour() {
-  return (
-    <svg
-      className="pointer-events-none absolute inset-0 z-0 h-full w-full text-[#8b8174]/28"
-      viewBox="0 0 1440 980"
-      fill="none"
-      aria-hidden="true"
-      preserveAspectRatio="none"
-    >
-      <path
-        d="M-140 804C42 730 172 746 288 838C432 952 604 943 761 810C940 658 1188 633 1541 733"
-        stroke="currentColor"
-        strokeWidth="1"
-      />
-      <path
-        d="M697 210C844 41 1138 62 1229 221C1313 367 1167 517 988 466C838 423 792 277 892 180C993 83 1187 89 1375 211"
-        stroke="currentColor"
-        strokeWidth="1"
-      />
-    </svg>
-  );
-}
