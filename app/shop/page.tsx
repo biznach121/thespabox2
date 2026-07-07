@@ -36,7 +36,7 @@ export default async function ShopPage() {
           <p className="spabox-eyebrow">Shop</p>
           <h1 className="spabox-title">Beauty products and services.</h1>
           <p className="spabox-lede">
-            Browse The SpaBox menu, bookable services, and beauty products in one place.
+            Browse the {brand.shortName} menu, bookable services, and beauty products in one place.
           </p>
         </header>
         <ShopClient products={products} categories={categories} />

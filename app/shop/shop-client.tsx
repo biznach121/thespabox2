@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { Category, Product } from "@cimplify/sdk";
+import { brand } from "@/lib/brand";
 import { StoreProductCard } from "@/components/store-product-card";
 
 type SortKey = "newest" | "price-asc" | "price-desc" | "name-asc";
@@ -9,7 +10,7 @@ type SortKey = "newest" | "price-asc" | "price-desc" | "name-asc";
 export function ShopClient({
   products,
   categories,
-  title = "The SpaBox menu",
+  title = `${brand.shortName} menu`,
   searchPlaceholder = "Search...",
 }: {
   products: Product[];

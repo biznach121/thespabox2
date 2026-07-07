@@ -2,14 +2,19 @@ import Link from "next/link";
 import { SpaBoxLogo } from "./spa-box-logo";
 import { brand } from "@/lib/brand";
 
+function handleFromUrl(href: string): string {
+  const seg = href.replace(/\/+$/, "").split("/").pop() ?? "";
+  return seg.startsWith("@") ? seg : `@${seg}`;
+}
+
 export async function Footer() {
-  const instagram = brand.socials.find((social) => social.icon === "instagram");
+  const social = brand.socials[0];
   const serviceLinks = [
     { label: "Products", href: "/products" },
     { label: "Services", href: "/services" },
     { label: "Book", href: "/book" },
     { label: "Location", href: "/location" },
-    { label: "Instagram", href: instagram?.href ?? "https://www.instagram.com/_the_spabox/" },
+    ...(social ? [{ label: social.label, href: social.href }] : []),
   ];
 
   return (
@@ -21,7 +26,16 @@ export async function Footer() {
           <div className="grid gap-12 lg:grid-cols-[360px_1fr] lg:gap-20">
             <div>
               <Link href="/" className="block w-fit uppercase leading-none">
-                <SpaBoxLogo className="text-[#f3f0e8]/84" />
+                {brand.footer.logoUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={brand.footer.logoUrl}
+                    alt={brand.name}
+                    className="h-[96px] w-auto max-w-[220px] rounded-[18px] object-contain"
+                  />
+                ) : (
+                  <SpaBoxLogo className="text-[#f3f0e8]/84" />
+                )}
               </Link>
 
               <div className="mt-10 max-w-[310px] space-y-3 text-[17px] font-medium leading-[1.3] text-[#f3f0e8]/78">
@@ -33,9 +47,9 @@ export async function Footer() {
             <div className="grid gap-10 md:grid-cols-[1.1fr_0.8fr_0.8fr]">
               <address className="not-italic">
                 <p className="m-0 font-serif text-[48px] font-light leading-[0.86] tracking-normal text-[#f3f0e8]/90 sm:text-[64px] lg:text-[76px]">
-                  The SpaBox,
+                  {brand.name},
                   <br />
-                  Kumasi
+                  {brand.contact.city}
                 </p>
                 <Link
                   href="/book"
@@ -53,25 +67,27 @@ export async function Footer() {
                   href={`tel:${brand.contact.phoneTel}`}
                   className="footer-contact-line text-[20px] font-semibold leading-tight text-[#f3f0e8]/88 transition-colors hover:text-white"
                 >
-                  Call 0550593869
+                  Call {brand.contact.phone}
                 </a>
-                <a
-                  href="sms:+233599067017"
-                  className="footer-contact-line text-[20px] font-semibold leading-tight text-[#f3f0e8]/88 transition-colors hover:text-white"
-                >
-                  Text 0599067017
-                </a>
-                <p className="footer-contact-line m-0 text-[20px] font-semibold leading-tight text-[#f3f0e8]/88">
-                  Kumasi, Ghana
-                </p>
-                {instagram ? (
+                {brand.contact.textPhone ? (
                   <a
-                    href={instagram.href}
+                    href={`sms:${brand.contact.textPhoneTel ?? brand.contact.phoneTel}`}
+                    className="footer-contact-line text-[20px] font-semibold leading-tight text-[#f3f0e8]/88 transition-colors hover:text-white"
+                  >
+                    Text {brand.contact.textPhone}
+                  </a>
+                ) : null}
+                <p className="footer-contact-line m-0 text-[20px] font-semibold leading-tight text-[#f3f0e8]/88">
+                  {brand.contact.city}, Ghana
+                </p>
+                {social ? (
+                  <a
+                    href={social.href}
                     target="_blank"
                     rel="noreferrer"
                     className="footer-contact-line text-[20px] font-semibold leading-tight text-[#f3f0e8]/88 transition-colors hover:text-white"
                   >
-                    Instagram @_the_spabox
+                    {social.label} {handleFromUrl(social.href)}
                   </a>
                 ) : null}
               </div>
@@ -109,7 +125,7 @@ export async function Footer() {
 
           <div className="flex flex-col gap-3 border-t border-[#f3f0e8]/18 pt-6 text-[13px] font-medium text-[#f3f0e8]/58 sm:flex-row sm:items-center sm:justify-between">
             <p className="m-0">
-              &copy; {new Date().getFullYear()} The SpaBox. Your sanctuary of beauty and peace.
+              &copy; {new Date().getFullYear()} {brand.name}. {brand.microTag.toLowerCase().replace(/^./, (c) => c.toUpperCase())}.
             </p>
             <div className="flex gap-5">
               <Link href="/privacy" className="transition-colors hover:text-white">

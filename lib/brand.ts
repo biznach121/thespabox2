@@ -29,6 +29,10 @@ export interface Brand {
     address: string; streetAddress: string; city: string; countryCode: string;
     phone: string; phoneTel: string; email: string; privacyEmail: string;
     supportEmail?: string; businessEmail?: string; hours: string;
+    /* Optional second line ("Text ...") + exact map links; pages fall back
+       to the primary phone and a name+city Google Maps search. */
+    textPhone?: string; textPhoneTel?: string;
+    mapsUrl?: string; mapsEmbed?: string;
   };
   socials: BrandSocial[];
   header: {
@@ -136,6 +140,9 @@ export interface Brand {
   footer: {
     blurb: string; sitemap: BrandSitemapSection[];
     poweredBy?: { label: string; href: string };
+    /* Real business logo for the footer (set when the avatar is a clean
+       logo); undefined -> the wordmark component renders instead. */
+    logoUrl?: string;
   };
   llms: { summary: string };
   mock: { seed: SeedName; businessId: string };
@@ -159,6 +166,11 @@ export const brand: Brand = {
     countryCode: "GH",
     phone: "0550593869",
     phoneTel: "+233550593869",
+    textPhone: "0599067017",
+    textPhoneTel: "+233599067017",
+    mapsUrl:
+      "https://www.google.com/maps/place/the+SpaBox/@6.6740733,-1.6064683,17z/data=!3m1!4b1!4m6!3m5!1s0xfdb97ed58d74013:0x6e4c1fa97e2ebaa1!8m2!3d6.6740733!4d-1.6064683!16s%2Fg%2F11xrpbr8mq?entry=ttu&g_ep=EgoyMDI2MDYwMS4wIKXMDSoASAFQAw%3D%3D",
+    mapsEmbed: "https://www.google.com/maps?q=6.6740733,-1.6064683&z=17&output=embed",
     email: "hello@thespabox.test",
     privacyEmail: "privacy@thespabox.test",
     hours: "Call or text to book",
