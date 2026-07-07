@@ -200,11 +200,12 @@ export const brand: Brand = {
     primaryCtaHref: "/book",
     secondaryCtaLabel: "View services",
     secondaryCtaHref: "/services",
+    // Generic spa hero clip — deliberately business-neutral so every
+    // reskinned demo can ship with it as-is.
     videoUrl:
-      "https://res.cloudinary.com/dcc5ggnkc/video/upload/v1780581502/tbwbfo6qn3mrassugjrg.mp4",
+      "https://res.cloudinary.com/dcc5ggnkc/video/upload/v1783439648/nvddib3nh4vkymjdhpwh.mp4",
     videoUrls: [
-      "https://res.cloudinary.com/dcc5ggnkc/video/upload/v1780581502/tbwbfo6qn3mrassugjrg.mp4",
-      "https://res.cloudinary.com/dcc5ggnkc/video/upload/v1780682396/sykj9tjdiqdc48j7adak.mp4",
+      "https://res.cloudinary.com/dcc5ggnkc/video/upload/v1783439648/nvddib3nh4vkymjdhpwh.mp4",
     ],
   },
 
