@@ -1,10 +1,51 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { brand } from "@/lib/brand";
 
+/**
+ * Media carousel — the vendor's own TikTok clips. Shows ~3 tall cards at a
+ * time; the arrows slide the track by one card (scroll-snap), so the next
+ * clip appears on the right. Cards are portrait (clips are vertical) and
+ * large. The "Follow" button is a pill linking to the vendor's social.
+ */
 export function MediaGallery() {
+  const items = brand.media.images;
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [atStart, setAtStart] = useState(true);
+  const [atEnd, setAtEnd] = useState(false);
+
+  const sync = useCallback(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    setAtStart(el.scrollLeft <= 4);
+    setAtEnd(el.scrollLeft + el.clientWidth >= el.scrollWidth - 4);
+  }, []);
+
+  useEffect(() => {
+    sync();
+    const el = trackRef.current;
+    if (!el) return;
+    el.addEventListener("scroll", sync, { passive: true });
+    window.addEventListener("resize", sync);
+    return () => {
+      el.removeEventListener("scroll", sync);
+      window.removeEventListener("resize", sync);
+    };
+  }, [sync]);
+
+  const scrollByCard = (dir: 1 | -1) => {
+    const el = trackRef.current;
+    if (!el) return;
+    const card = el.querySelector<HTMLElement>("[data-media-card]");
+    const step = card ? card.offsetWidth + 20 : el.clientWidth / 3;
+    el.scrollBy({ left: dir * step, behavior: "smooth" });
+  };
+
   return (
-    <section className="relative isolate overflow-hidden bg-[#e8e5dd] px-3 pb-20 pt-12 text-[#402720] sm:px-5">
+    <section className="relative isolate overflow-hidden bg-[#e8e5dd] px-4 pb-24 pt-14 text-[#402720] sm:px-8">
       <svg
         className="pointer-events-none absolute -left-16 -top-36 z-0 h-96 w-[520px] text-[#8b8174]/28"
         viewBox="0 0 520 380"
@@ -14,36 +55,51 @@ export function MediaGallery() {
         <path
           d="M38 7C143 151 256 184 375 111C474 50 529 133 451 213C331 336 157 260 89 153C33 65 75 -2 186 41C287 80 285 174 184 180C74 187 6 103 38 7Z"
           stroke="currentColor"
-          strokeWidth="1"
+          strokeWidth="1.5"
         />
       </svg>
 
-      <div className="relative z-10 mx-auto max-w-[1680px]">
-        <div className="grid grid-cols-[1fr_auto_1fr] items-start gap-5 pb-12">
-          <div />
-          <h2 className="m-0 text-center font-serif text-[82px] font-light leading-none tracking-normal sm:text-[110px] lg:text-[132px]">
+      <div className="relative z-10 mx-auto max-w-[1360px]">
+        <div className="mb-10 flex flex-col items-start gap-6 sm:flex-row sm:items-end sm:justify-between">
+          <h2 className="m-0 font-serif text-[64px] font-light leading-[0.9] tracking-normal sm:text-[88px] lg:text-[104px]">
             {brand.media.title}
           </h2>
-          <div className="flex justify-end pt-5">
+
+          <div className="flex items-center gap-3">
             <Link
               href={brand.media.ctaHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex h-16 w-20 items-center justify-center bg-[#402720] text-[14px] font-semibold uppercase text-[#e8e5dd] transition-transform hover:scale-105"
+              className="group inline-flex h-14 items-center gap-2.5 rounded-full bg-[#402720] pl-7 pr-6 text-[14px] font-semibold uppercase tracking-[0.12em] text-[#f3f0e8] shadow-[0_14px_34px_rgba(64,39,32,0.22)] transition-transform duration-300 hover:scale-[1.04]"
             >
               {brand.media.ctaLabel}
+              <span className="grid h-7 w-7 place-items-center rounded-full bg-[#f3f0e8]/18 transition-transform duration-300 group-hover:translate-x-0.5">
+                <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4" aria-hidden="true">
+                  <path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
             </Link>
+
+            {items.length > 3 && (
+              <div className="hidden items-center gap-2 sm:flex">
+                <CarouselButton dir={-1} disabled={atStart} onClick={() => scrollByCard(-1)} />
+                <CarouselButton dir={1} disabled={atEnd} onClick={() => scrollByCard(1)} />
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-          {brand.media.images.map((image) => {
+        <div
+          ref={trackRef}
+          className="no-scrollbar flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth pb-1"
+        >
+          {items.map((image) => {
             const isVideo = image.src.endsWith(".mp4");
-
             return (
               <div
                 key={image.src}
-                className="relative aspect-square overflow-hidden bg-[#d8d3c5]"
+                data-media-card
+                className="relative aspect-[3/4] w-[80%] shrink-0 snap-start overflow-hidden rounded-[26px] bg-[#d8d3c5] shadow-[0_20px_54px_rgba(64,39,32,0.16)] sm:w-[46%] lg:w-[calc((100%-2.5rem)/3)]"
               >
                 {isVideo ? (
                   <video
@@ -62,7 +118,7 @@ export function MediaGallery() {
                     src={image.src}
                     alt={image.alt}
                     fill
-                    sizes="(min-width: 768px) 20vw, 50vw"
+                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 46vw, 80vw"
                     className="object-cover"
                     style={{ objectPosition: image.position }}
                     unoptimized
@@ -74,5 +130,29 @@ export function MediaGallery() {
         </div>
       </div>
     </section>
+  );
+}
+
+function CarouselButton({
+  dir,
+  disabled,
+  onClick,
+}: {
+  dir: 1 | -1;
+  disabled: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={dir === 1 ? "Next" : "Previous"}
+      className="grid h-14 w-14 place-items-center rounded-full border border-[#402720]/18 bg-[#f3f0e8] text-[#402720] transition-all duration-300 hover:border-[#402720] hover:bg-[#402720] hover:text-[#f3f0e8] disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:border-[#402720]/18 disabled:hover:bg-[#f3f0e8] disabled:hover:text-[#402720]"
+    >
+      <svg viewBox="0 0 24 24" fill="none" className={`h-5 w-5 ${dir === -1 ? "rotate-180" : ""}`} aria-hidden="true">
+        <path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </button>
   );
 }

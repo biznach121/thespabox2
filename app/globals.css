@@ -44,11 +44,18 @@
   }
 }
 
-@layer components {
-  body:has(.spa-video-hero) [data-site-header] {
-    display: none;
-  }
+/* Home page: hide the sticky site header so only the hero's own transparent
+   nav shows. UNLAYERED + !important on purpose — the header carries Tailwind
+   `flex`/`sticky` utilities, and in Tailwind v4 the utilities layer always
+   beats @layer components regardless of specificity, so a layered `display:
+   none` loses the cascade and the header leaks onto the homepage. (It reaches
+   the DOM because usePathname() returns null during static prerender, so the
+   JS guard doesn't fire at build time — this CSS is the real safety net.) */
+body:has(.spa-video-hero) [data-site-header] {
+  display: none !important;
+}
 
+@layer components {
   body:has(.spa-video-hero) main {
     background: #e8e5dd;
   }
